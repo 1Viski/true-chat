@@ -1,0 +1,13 @@
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/bin/Debug/net8.0/TrueChat.Core.deps.json
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/bin/Debug/net8.0/TrueChat.Core.dll
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/bin/Debug/net8.0/TrueChat.Core.pdb
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.csproj.AssemblyReference.cache
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.AssemblyInfoInputs.cache
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.AssemblyInfo.cs
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.csproj.CoreCompileInputs.cache
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.sourcelink.json
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.dll
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/refint/TrueChat.Core.dll
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/TrueChat.Core.pdb
+/Users/Viski/RiderProjects/true-chat/src/TrueChat.Core/obj/Debug/net8.0/ref/TrueChat.Core.dll

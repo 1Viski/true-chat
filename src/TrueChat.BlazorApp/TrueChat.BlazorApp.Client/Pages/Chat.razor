@@ -1,0 +1,90 @@
+@page "/chat"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@attribute [StreamRendering]
+@inject IChatService ChatService
+@implements IAsyncDisposable
+
+<PageTitle>Chat</PageTitle>
+
+<h3>Chat</h3>
+
+<input type="text" @bind="_userInput"/>
+<input type="text" @bind="_messageInput"/>
+<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+
+@if (_messages is null)
+{
+    <div><span>Loading...</span></div>
+}
+else
+{
+    <ul id="messageList">
+        @foreach (var message in _messages)
+        {
+            @if (message.Nickname is not null)
+            {
+                <li>@message.Nickname: @message.Text</li>
+            }
+        }
+    </ul>
+}
+
+@code {
+    private HubConnection? _hubConnection;
+    private List<ChatMessage>? _messages;
+    private string? _userInput;
+    private string? _messageInput;
+
+    public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _messages = (await ChatService.GetMessagesAsync()).ToList();
+        
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl("https://localhost:7145/chat-hub")
+            .Build();
+
+        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var chatMessage = new ChatMessage
+            {
+                Id = Ulid.NewUlid(),
+                SendAt = DateTimeOffset.UtcNow,
+                Text = message,
+                Nickname = user
+            };
+            
+            _messages!.Add(chatMessage);
+            StateHasChanged();
+        });
+
+        await _hubConnection.StartAsync();
+    }
+
+    public async Task Send()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection!.SendAsync("SendMessage", _userInput, _messageInput);
+            
+            var chatMessage = new ChatMessage
+            {
+                Id = Ulid.NewUlid(),
+                SendAt = DateTimeOffset.UtcNow,
+                Text = _messageInput,
+                Nickname = _userInput
+            };
+
+            await ChatService.AddMessageAsync(chatMessage);
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+}

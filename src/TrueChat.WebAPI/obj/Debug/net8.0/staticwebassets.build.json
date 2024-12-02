@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "26zEx5NWy2DUbmCcibK2JpCNiZtkPFDeYTn2sdVv1Xk=",
+  "Source": "TrueChat.WebAPI",
+  "BasePath": "_content/TrueChat.WebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
