@@ -8,9 +8,23 @@
 
 <h3>Chat</h3>
 
-<input type="text" @bind="_userInput"/>
-<input type="text" @bind="_messageInput"/>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+<EditForm Model="FormMessage" OnSubmit="Send" FormName="ChatInput">
+    <div>
+        <label>
+            Nickname:
+            <InputText @bind-Value="@FormMessage!.Nickname"/>
+        </label>
+    </div>
+    <div>
+        <label>
+            Message:
+            <InputText @bind-Value="@FormMessage.Text"/>
+        </label>
+    </div>
+    <div>
+        <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+    </div>
+</EditForm>
 
 @if (_messages is null)
 {
@@ -32,13 +46,15 @@ else
 @code {
     private HubConnection? _hubConnection;
     private List<ChatMessage>? _messages;
-    private string? _userInput;
-    private string? _messageInput;
+
+    [SupplyParameterFromForm] 
+    public FormMessage? FormMessage { get; set; }
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
     protected override async Task OnInitializedAsync()
     {
+        FormMessage ??= new FormMessage();
         _messages = (await ChatService.GetMessagesAsync()).ToList();
         
         _hubConnection = new HubConnectionBuilder()
@@ -58,8 +74,8 @@ else
     {
         if (_hubConnection is not null)
         {
-            var chatMessage = new ChatMessage(_messageInput, _userInput, DateTimeOffset.UtcNow);
-            _messageInput = string.Empty;
+            var chatMessage = new ChatMessage(FormMessage!.Text, FormMessage.Nickname, DateTimeOffset.UtcNow);
+            FormMessage.Text = string.Empty;
             await _hubConnection!.SendAsync("SendMessage", chatMessage);
             await ChatService.AddMessageAsync(chatMessage);
         }
