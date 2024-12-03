@@ -1,12 +1,3 @@
 namespace TrueChat.BlazorApp.Client.Models;
 
-public class ChatMessage
-{
-    public Ulid Id { get; set; }
-
-    public DateTimeOffset SendAt { get; set; }
-
-    public string? Text { get; set; }
-
-    public string? Nickname { get; set; }
-}
+public record ChatMessage(string? Text, string? Nickname, DateTimeOffset SendAt);
