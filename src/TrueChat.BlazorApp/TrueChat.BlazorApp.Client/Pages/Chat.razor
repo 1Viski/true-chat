@@ -45,16 +45,8 @@ else
             .WithUrl("https://localhost:7145/chat-hub")
             .Build();
 
-        _hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
         {
-            var chatMessage = new ChatMessage
-            {
-                Id = Ulid.NewUlid(),
-                SendAt = DateTimeOffset.UtcNow,
-                Text = message,
-                Nickname = user
-            };
-            
             _messages!.Add(chatMessage);
             StateHasChanged();
         });
@@ -66,16 +58,9 @@ else
     {
         if (_hubConnection is not null)
         {
-            await _hubConnection!.SendAsync("SendMessage", _userInput, _messageInput);
-            
-            var chatMessage = new ChatMessage
-            {
-                Id = Ulid.NewUlid(),
-                SendAt = DateTimeOffset.UtcNow,
-                Text = _messageInput,
-                Nickname = _userInput
-            };
-
+            var chatMessage = new ChatMessage(_messageInput, _userInput, DateTimeOffset.UtcNow);
+            _messageInput = string.Empty;
+            await _hubConnection!.SendAsync("SendMessage", chatMessage);
             await ChatService.AddMessageAsync(chatMessage);
         }
     }
