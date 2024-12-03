@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MudBlazor" Version="7.15.0" />
         <ProjectReference Include="..\TrueChat.BlazorApp.Client\TrueChat.BlazorApp.Client.csproj"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.11"/>
     </ItemGroup>

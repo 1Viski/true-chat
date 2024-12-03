@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using MudBlazor.Services;
 using TrueChat.BlazorApp.Client.Clients;
 using TrueChat.BlazorApp.Client.Services;
 using TrueChat.BlazorApp.Components;
@@ -11,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddMudServices();
 
 builder.Services.AddHttpClient<IChatClient, ChatClient>();
 builder.Services.AddScoped<IChatService, ChatService>();

@@ -1,0 +1,12 @@
+::deep .message-box {
+    border-radius: 1rem !important;
+    background-color: rgba(94, 35, 196, 0.23) !important;
+    padding: 0.5rem !important;
+    width: fit-content !important;
+}
+
+::deep .message-box-time {
+    padding: 0 0.5rem !important;
+    width: fit-content !important;
+    margin: 0;
+}

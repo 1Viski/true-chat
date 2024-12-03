@@ -1,0 +1,24 @@
+<div style="margin: 0.25rem">
+    <MudStack
+        Row
+        Spacing="0"
+        AlignItems="AlignItems.Center"
+        Justify="Justify.FlexStart">
+        <MudPaper
+            Class="message-box"
+            Elevation="0">
+            <MudText>
+                <b>@Message!.Nickname -></b> @Message.Text
+            </MudText>
+        </MudPaper>
+        <MudText
+            Class="message-box-time"
+            Typo="Typo.caption">
+            @Message!.SendAt.ToLocalTime().ToString("HH:mm")
+        </MudText>
+    </MudStack>
+</div>
+
+@code {
+    [Parameter] public ChatMessage? Message { get; set; }
+}

@@ -4,43 +4,46 @@
 @inject IChatService ChatService
 @implements IAsyncDisposable
 
-<PageTitle>Chat</PageTitle>
+<PageTitle>true:chat:room</PageTitle>
 
-<h3>Chat</h3>
+<h3>true:chat:room</h3>
 
-<EditForm Model="FormMessage" OnSubmit="Send" FormName="ChatInput">
-    <div>
-        <label>
-            Nickname:
-            <InputText @bind-Value="@FormMessage!.Nickname"/>
-        </label>
-    </div>
-    <div>
-        <label>
-            Message:
-            <InputText @bind-Value="@FormMessage.Text"/>
-        </label>
-    </div>
-    <div>
-        <button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+<MudDivider Class="my-2"/>
+<EditForm Model="FormMessage" OnSubmit="Send">
+    <div class="d-flex">
+        <MudTextField 
+            Class="mx-1"
+            @bind-Value="@FormMessage!.Nickname" 
+            Label="Nickname" 
+            Variant="Variant.Outlined"
+            InputType="InputType.Text"/>
+        <MudTextField 
+            Class="mx-1"
+            @bind-Value="@FormMessage!.Text" 
+            Label="Message" 
+            Variant="Variant.Outlined"
+            InputType="InputType.Text"
+            Adornment="Adornment.End"
+            AdornmentIcon="@Icons.Material.Filled.Send"
+            Disabled="!IsConnected"
+            OnAdornmentClick="Send"/>
+        <MudButton
+            hidden="true"
+            ButtonType="ButtonType.Submit">
+        </MudButton>
     </div>
 </EditForm>
 
-@if (_messages is null)
+@if (_messages is null || !IsConnected)
 {
-    <div><span>Loading...</span></div>
+    <div>Loading...</div>
 }
 else
 {
-    <ul id="messageList">
-        @foreach (var message in _messages)
-        {
-            @if (message.Nickname is not null)
-            {
-                <li>@message.Nickname: @message.Text</li>
-            }
-        }
-    </ul>
+    @foreach (var message in _messages)
+    {
+        <ChatMessageCard Message="message"/>
+    }
 }
 
 @code {
