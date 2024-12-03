@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using TrueChat.BlazorApp.Client.Clients;
 using TrueChat.BlazorApp.Client.Services;
 

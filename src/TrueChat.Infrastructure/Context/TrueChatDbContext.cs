@@ -1,3 +1,4 @@
+using System;
 using Microsoft.EntityFrameworkCore;
 using TrueChat.Core.Interfaces;
 using TrueChat.Core.Models;
@@ -5,14 +6,14 @@ using TrueChat.Core.Models;
 namespace TrueChat.Infrastructure.Context;
 
 /// <summary>
-/// Database context
+/// Database context inherit of <see cref="DbContext"/>, implements <see cref="IAppDbContext"/>
 /// </summary>
 public class TrueChatDbContext : DbContext, IAppDbContext
 {
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="options">Send to base options</param>
+    /// <param name="options">Base options</param>
     public TrueChatDbContext(DbContextOptions options) : base(options) { }
     
     /// <summary>
@@ -23,7 +24,7 @@ public class TrueChatDbContext : DbContext, IAppDbContext
     /// <summary>
     /// Override method OnModelCreating for fluent design
     /// </summary>
-    /// <param name="modelBuilder"></param>
+    /// <param name="modelBuilder"><see cref="ModelBuilder"/></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ChatMessage>(entity =>
@@ -37,6 +38,14 @@ public class TrueChatDbContext : DbContext, IAppDbContext
                     x => Ulid.Parse(x));
 
             entity.HasIndex(x => x.Nickname);
+
+            entity
+                .Property(x => x.Nickname)
+                .HasMaxLength(50);
+
+            entity
+                .Property(x => x.Text)
+                .HasMaxLength(500);
         });
     }
 }

@@ -1,6 +1,9 @@
+using System.Threading.Tasks;
+using TrueChat.Core.Dtos;
+
 namespace TrueChat.Core.Interfaces;
 
 public interface IChatClient
 {
-    public Task ReceiveMessage(string user, string message);
+    public Task ReceiveMessage(ChatMessageDto chatMessageDto);
 }

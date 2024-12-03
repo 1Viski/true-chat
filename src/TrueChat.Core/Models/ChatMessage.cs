@@ -1,3 +1,5 @@
+using System;
+
 namespace TrueChat.Core.Models;
 
 public class ChatMessage
