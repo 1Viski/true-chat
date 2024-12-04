@@ -1,5 +1,5 @@
 ::deep .message-box {
-    border-radius: 1rem !important;
+    border-radius: 1rem 1rem 1rem 0;
     background-color: rgba(94, 35, 196, 0.23) !important;
     padding: 0.5rem !important;
     width: fit-content !important;

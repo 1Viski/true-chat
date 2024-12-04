@@ -1,0 +1,9 @@
+::deep .messages {
+    border-radius: 1rem !important;
+    background-color: whitesmoke !important;
+    padding: 1rem !important;
+    height: calc(100vh - 250px);
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+}

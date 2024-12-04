@@ -9,42 +9,54 @@
 <h3>true:chat:room</h3>
 
 <MudDivider Class="my-2"/>
-<EditForm Model="FormMessage" OnSubmit="Send">
-    <div class="d-flex">
-        <MudTextField 
-            Class="mx-1"
-            @bind-Value="@FormMessage!.Nickname" 
-            Label="Nickname" 
-            Variant="Variant.Outlined"
-            InputType="InputType.Text"/>
-        <MudTextField 
-            Class="mx-1"
-            @bind-Value="@FormMessage!.Text" 
-            Label="Message" 
-            Variant="Variant.Outlined"
-            InputType="InputType.Text"
-            Adornment="Adornment.End"
-            AdornmentIcon="@Icons.Material.Filled.Send"
-            Disabled="!IsConnected"
-            OnAdornmentClick="Send"/>
-        <MudButton
-            hidden="true"
-            ButtonType="ButtonType.Submit">
-        </MudButton>
-    </div>
-</EditForm>
 
-@if (_messages is null || !IsConnected)
-{
-    <div>Loading...</div>
-}
-else
-{
-    @foreach (var message in _messages)
-    {
-        <ChatMessageCard Message="message"/>
-    }
-}
+<div class="container">
+    <MudPaper 
+        Class="messages object-fit-fill"
+        Elevation="0">
+        @if (_messages is null || !IsConnected)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true"/>
+        }
+        else
+        {
+            @foreach (var message in _messages)
+            {
+                <ChatMessageCard Message="message"/>
+            }
+        }
+    </MudPaper>
+
+    <EditForm 
+        Model="FormMessage" 
+        OnSubmit="Send">
+        <div class="d-flex">
+            <DataAnnotationsValidator/>
+            <MudTextField
+                Class="mx-1"
+                @bind-Value="@FormMessage!.Nickname"
+                For="@(() => FormMessage!.Nickname)"
+                Label="Nickname"
+                Variant="Variant.Outlined"
+                InputType="InputType.Text"/>
+            <MudTextField
+                Class="mx-1"
+                @bind-Value="@FormMessage!.Text"
+                For="@(() => FormMessage!.Text)"
+                Label="Message"
+                Variant="Variant.Outlined"
+                InputType="InputType.Text"
+                Adornment="Adornment.End"
+                AdornmentIcon="@Icons.Material.Filled.Send"
+                Disabled="!IsConnected"
+                OnAdornmentClick="Send"/>
+            <MudButton
+                hidden="true"
+                ButtonType="ButtonType.Submit">
+            </MudButton>
+        </div>
+    </EditForm>
+</div>
 
 @code {
     private HubConnection? _hubConnection;
@@ -59,6 +71,7 @@ else
     {
         FormMessage ??= new FormMessage();
         _messages = (await ChatService.GetMessagesAsync()).ToList();
+        _messages.Reverse();
         
         _hubConnection = new HubConnectionBuilder()
             .WithUrl("https://localhost:7145/chat-hub")
@@ -66,7 +79,7 @@ else
 
         _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
         {
-            _messages!.Add(chatMessage);
+            _messages!.Insert(0, chatMessage);
             StateHasChanged();
         });
 
