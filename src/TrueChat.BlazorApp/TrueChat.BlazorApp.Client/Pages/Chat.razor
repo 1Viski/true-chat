@@ -3,11 +3,35 @@
 @attribute [StreamRendering]
 @inject IChatService ChatService
 @inject IAnalyticsService AnalyticsService
+@using TrueChat.BlazorApp.Client.Enums
 @implements IAsyncDisposable
 
 <PageTitle>true:chat:room</PageTitle>
 
-<h3>true:chat:room</h3>
+<MudStack 
+    Row 
+    AlignItems="AlignItems.Center" 
+    Spacing="0">
+    <h3>true:chat:room</h3>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Success">
+        @_positive
+    </MudChip>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Info">
+        @_neutral
+    </MudChip>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Error">
+        @_negative
+    </MudChip>
+</MudStack>
 
 <MudDivider Class="my-2"/>
 
@@ -43,7 +67,6 @@
             <MudTextField
                 Class="mx-1"
                 @bind-Value="@FormMessage!.Text"
-                For="@(() => FormMessage!.Text)"
                 Label="Message"
                 Variant="Variant.Outlined"
                 InputType="InputType.Text"
@@ -60,6 +83,9 @@
 </div>
 
 @code {
+    private string? _positive;
+    private string? _neutral;
+    private string? _negative;
     private HubConnection? _hubConnection;
     private List<ChatMessage>? _messages;
 
@@ -70,6 +96,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _positive = DocumentSentiment.Positive.ToString();
+        _neutral = DocumentSentiment.Neutral.ToString();
+        _negative = DocumentSentiment.Negative.ToString();
+        
         FormMessage ??= new FormMessage();
         _messages = (await ChatService.GetMessagesAsync()).ToList();
         _messages.Reverse();
@@ -89,7 +119,9 @@
 
     public async Task Send()
     {
-        if (_hubConnection is not null)
+        if (_hubConnection is not null 
+            && !string.IsNullOrEmpty(FormMessage!.Text) 
+            && !string.IsNullOrWhiteSpace(FormMessage.Text))
         {
             var sentiment = await AnalyticsService.GetSentiment(FormMessage!.Text!);
             

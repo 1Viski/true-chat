@@ -1,16 +1,24 @@
+@using TrueChat.BlazorApp.Client.Enums
+@rendermode @(new InteractiveWebAssemblyRenderMode())
+
 <div style="margin: 0.25rem">
     <MudStack
         Row
         Spacing="0"
         AlignItems="AlignItems.Center"
         Justify="Justify.FlexStart">
-        <MudPaper
-            Class="message-box"
-            Elevation="0">
-            <MudText>
-                <b>@Message!.Nickname -></b> @Message.Text (@Message.Sentiment)
-            </MudText>
-        </MudPaper>
+        <MudBadge 
+            Color="@_color"
+            Overlap="true"
+            Bordered="true">
+            <MudPaper
+                Class="message-box"
+                Elevation="0">
+                <MudText>
+                    <b>@Message!.Nickname -></b> @Message.Text
+                </MudText>
+            </MudPaper>
+        </MudBadge>
         <MudText
             Class="message-box-time"
             Typo="Typo.caption">
@@ -21,4 +29,18 @@
 
 @code {
     [Parameter] public ChatMessage? Message { get; set; }
+
+    private Color _color;
+
+    protected override void OnInitialized()
+    {
+        _color = Message!.Sentiment switch
+        {
+            DocumentSentiment.Positive => Color.Success,
+            DocumentSentiment.Neutral => Color.Info,
+            DocumentSentiment.Negative or null => Color.Error,
+            _ => Color.Success
+        };
+    }
+
 }
