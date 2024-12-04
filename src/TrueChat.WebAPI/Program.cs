@@ -1,12 +1,9 @@
-using System;
-using System.Linq;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using TrueChat.Core;
 using TrueChat.Infrastructure;
 using TrueChat.WebAPI.Endpoints;
 using TrueChat.WebAPI.Hubs;
+using TrueChat.WebAPI.OptionsSetup;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR().AddAzureSignalR();
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddCore();
+
+builder.Services.ConfigureOptions<TextAnalyticsOptionsSetup>();
 
 builder.Services.AddResponseCompression(options =>
 {

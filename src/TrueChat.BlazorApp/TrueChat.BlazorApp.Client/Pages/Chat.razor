@@ -2,6 +2,7 @@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 @attribute [StreamRendering]
 @inject IChatService ChatService
+@inject IAnalyticsService AnalyticsService
 @implements IAsyncDisposable
 
 <PageTitle>true:chat:room</PageTitle>
@@ -90,7 +91,14 @@
     {
         if (_hubConnection is not null)
         {
-            var chatMessage = new ChatMessage(FormMessage!.Text, FormMessage.Nickname, DateTimeOffset.UtcNow);
+            var sentiment = await AnalyticsService.GetSentiment(FormMessage!.Text!);
+            
+            var chatMessage = new ChatMessage(
+                FormMessage!.Text, 
+                FormMessage.Nickname, 
+                DateTimeOffset.UtcNow,
+                sentiment);
+            
             FormMessage.Text = string.Empty;
             await _hubConnection!.SendAsync("SendMessage", chatMessage);
             await ChatService.AddMessageAsync(chatMessage);

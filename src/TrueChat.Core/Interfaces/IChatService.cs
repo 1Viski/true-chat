@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using TrueChat.Core.Models;
 
 namespace TrueChat.Core.Interfaces;

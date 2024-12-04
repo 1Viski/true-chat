@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using TrueChat.Core.Interfaces;
 using TrueChat.Core.Models;
@@ -26,6 +21,7 @@ public class ChatService : IChatService
     public ChatService(IAppDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
+        
     }
 
     /// <summary>

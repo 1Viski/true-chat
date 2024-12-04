@@ -13,7 +13,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 
 builder.Services.AddHttpClient<IChatClient, ChatClient>();
+builder.Services.AddHttpClient<IAnalyticsClient, AnalyticsClient>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
 
 var app = builder.Build();
 

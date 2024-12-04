@@ -1,4 +1,4 @@
-using System;
+using TrueChat.Core.Enums;
 
 namespace TrueChat.Core.Models;
 
@@ -11,4 +11,6 @@ public class ChatMessage
     public string? Text { get; set; }
 
     public string? Nickname { get; set; }
+
+    public DocumentSentiment Sentiment { get; set; }
 }

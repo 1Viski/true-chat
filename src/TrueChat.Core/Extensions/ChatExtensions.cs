@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using TrueChat.Core.Dtos;
 using TrueChat.Core.Models;
 
@@ -20,7 +18,8 @@ public static class ChatExtensions
         return new ChatMessageDto(
             chatMessage.Text,
             chatMessage.Nickname,
-            chatMessage.SendAt);
+            chatMessage.SendAt,
+            chatMessage.Sentiment);
     }
     
     /// <summary>
@@ -45,7 +44,8 @@ public static class ChatExtensions
             Id = default,
             SendAt = chatMessageDto.SendAt,
             Text = chatMessageDto.Text,
-            Nickname = chatMessageDto.Nickname
+            Nickname = chatMessageDto.Nickname,
+            Sentiment = chatMessageDto.Sentiment
         };
     }
 
