@@ -39,7 +39,7 @@
     <MudPaper 
         Class="messages object-fit-fill"
         Elevation="0">
-        @if (_messages is null || !IsConnected)
+        @if (_messages is null)
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true"/>
         }
@@ -101,20 +101,29 @@
         _negative = DocumentSentiment.Negative.ToString();
         
         FormMessage ??= new FormMessage();
-        _messages = (await ChatService.GetMessagesAsync()).ToList();
-        _messages.Reverse();
-        
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7145/chat-hub")
-            .Build();
 
-        _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
+        try
         {
-            _messages!.Insert(0, chatMessage);
-            StateHasChanged();
-        });
+            _messages = (await ChatService.GetMessagesAsync()).ToList();
+            _messages.Reverse();
 
-        await _hubConnection.StartAsync();
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:7145/chat-hub")
+                .Build();
+
+            _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
+            {
+                _messages!.Insert(0, chatMessage);
+                StateHasChanged();
+            });
+
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            _messages = [];
+            Console.WriteLine(e);
+        }
     }
 
     public async Task Send()

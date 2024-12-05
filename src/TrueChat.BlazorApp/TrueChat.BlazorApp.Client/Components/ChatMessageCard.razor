@@ -14,9 +14,19 @@
             <MudPaper
                 Class="message-box"
                 Elevation="0">
-                <MudText>
-                    <b>@Message!.Nickname -></b> @Message.Text
-                </MudText>
+                <MudStack 
+                    Row 
+                    AlignItems="AlignItems.Center"
+                    Spacing="0">
+                    <MudChip 
+                        T="string"
+                        Size="Size.Small">
+                        @Message!.Nickname
+                    </MudChip>
+                    <MudText>
+                        @Message!.Text
+                    </MudText>
+                </MudStack>
             </MudPaper>
         </MudBadge>
         <MudText
