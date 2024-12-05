@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using TrueChat.Core.Dtos;
 
 namespace TrueChat.Core.Interfaces;

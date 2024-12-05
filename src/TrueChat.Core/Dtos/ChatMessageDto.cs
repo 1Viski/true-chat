@@ -1,5 +1,9 @@
-using System;
+using TrueChat.Core.Enums;
 
 namespace TrueChat.Core.Dtos;
 
-public record ChatMessageDto(string? Text, string? Nickname, DateTimeOffset SendAt);
+public record ChatMessageDto(
+    string? Text, 
+    string? Nickname, 
+    DateTimeOffset SendAt, 
+    DocumentSentiment Sentiment);

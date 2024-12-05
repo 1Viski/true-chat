@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using TrueChat.Core.Dtos;
 using TrueChat.Core.Interfaces;

@@ -1,0 +1,56 @@
+@using TrueChat.BlazorApp.Client.Enums
+@rendermode @(new InteractiveWebAssemblyRenderMode())
+
+<div style="margin: 0.25rem">
+    <MudStack
+        Row
+        Spacing="0"
+        AlignItems="AlignItems.Center"
+        Justify="Justify.FlexStart">
+        <MudBadge 
+            Color="@_color"
+            Overlap="true"
+            Bordered="true">
+            <MudPaper
+                Class="message-box"
+                Elevation="0">
+                <MudStack 
+                    Row 
+                    AlignItems="AlignItems.Center"
+                    Spacing="0">
+                    <MudChip 
+                        T="string"
+                        Size="Size.Small">
+                        @Message!.Nickname
+                    </MudChip>
+                    <MudText>
+                        @Message!.Text
+                    </MudText>
+                </MudStack>
+            </MudPaper>
+        </MudBadge>
+        <MudText
+            Class="message-box-time"
+            Typo="Typo.caption">
+            @Message!.SendAt.ToLocalTime().ToString("HH:mm")
+        </MudText>
+    </MudStack>
+</div>
+
+@code {
+    [Parameter] public ChatMessage? Message { get; set; }
+
+    private Color _color;
+
+    protected override void OnInitialized()
+    {
+        _color = Message!.Sentiment switch
+        {
+            DocumentSentiment.Positive => Color.Success,
+            DocumentSentiment.Neutral => Color.Info,
+            DocumentSentiment.Negative or null => Color.Error,
+            _ => Color.Success
+        };
+    }
+
+}

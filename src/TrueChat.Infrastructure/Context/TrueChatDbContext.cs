@@ -1,5 +1,5 @@
-using System;
 using Microsoft.EntityFrameworkCore;
+using TrueChat.Core.Enums;
 using TrueChat.Core.Interfaces;
 using TrueChat.Core.Models;
 
@@ -30,12 +30,6 @@ public class TrueChatDbContext : DbContext, IAppDbContext
         modelBuilder.Entity<ChatMessage>(entity =>
         {
             entity.HasKey(x => x.Id);
-            
-            entity
-                .Property(x => x.Id)
-                .HasConversion(
-                    x => x.ToString(),
-                    x => Ulid.Parse(x));
 
             entity.HasIndex(x => x.Nickname);
 
@@ -46,6 +40,18 @@ public class TrueChatDbContext : DbContext, IAppDbContext
             entity
                 .Property(x => x.Text)
                 .HasMaxLength(500);
+            
+            entity
+                .Property(x => x.Id)
+                .HasConversion(
+                    x => x.ToString(),
+                    x => Ulid.Parse(x));
+
+            entity
+                .Property(x => x.Sentiment)
+                .HasConversion(
+                    x => x.ToString(),
+                    x => Enum.Parse<DocumentSentiment>(x));
         });
     }
 }

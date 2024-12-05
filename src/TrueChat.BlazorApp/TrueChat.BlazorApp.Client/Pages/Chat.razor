@@ -2,64 +2,145 @@
 @rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
 @attribute [StreamRendering]
 @inject IChatService ChatService
+@inject IAnalyticsService AnalyticsService
+@using TrueChat.BlazorApp.Client.Enums
 @implements IAsyncDisposable
 
-<PageTitle>Chat</PageTitle>
+<PageTitle>true:chat:room</PageTitle>
 
-<h3>Chat</h3>
+<MudStack 
+    Row 
+    AlignItems="AlignItems.Center" 
+    Spacing="0">
+    <h3>true:chat:room</h3>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Success">
+        @_positive
+    </MudChip>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Info">
+        @_neutral
+    </MudChip>
+    <MudChip
+        T="string"
+        Variant="Variant.Text"
+        Color="Color.Error">
+        @_negative
+    </MudChip>
+</MudStack>
 
-<input type="text" @bind="_userInput"/>
-<input type="text" @bind="_messageInput"/>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
+<MudDivider Class="my-2"/>
 
-@if (_messages is null)
-{
-    <div><span>Loading...</span></div>
-}
-else
-{
-    <ul id="messageList">
-        @foreach (var message in _messages)
+<div class="container">
+    <MudPaper 
+        Class="messages object-fit-fill"
+        Elevation="0">
+        @if (_messages is null)
         {
-            @if (message.Nickname is not null)
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true"/>
+        }
+        else
+        {
+            @foreach (var message in _messages)
             {
-                <li>@message.Nickname: @message.Text</li>
+                <ChatMessageCard Message="message"/>
             }
         }
-    </ul>
-}
+    </MudPaper>
+
+    <EditForm 
+        Model="FormMessage" 
+        OnSubmit="Send">
+        <div class="d-flex">
+            <DataAnnotationsValidator/>
+            <MudTextField
+                Class="mx-1"
+                @bind-Value="@FormMessage!.Nickname"
+                For="@(() => FormMessage!.Nickname)"
+                Label="Nickname"
+                Variant="Variant.Outlined"
+                InputType="InputType.Text"/>
+            <MudTextField
+                Class="mx-1"
+                @bind-Value="@FormMessage!.Text"
+                Label="Message"
+                Variant="Variant.Outlined"
+                InputType="InputType.Text"
+                Adornment="Adornment.End"
+                AdornmentIcon="@Icons.Material.Filled.Send"
+                Disabled="!IsConnected"
+                OnAdornmentClick="Send"/>
+            <MudButton
+                hidden="true"
+                ButtonType="ButtonType.Submit">
+            </MudButton>
+        </div>
+    </EditForm>
+</div>
 
 @code {
+    private string? _positive;
+    private string? _neutral;
+    private string? _negative;
     private HubConnection? _hubConnection;
     private List<ChatMessage>? _messages;
-    private string? _userInput;
-    private string? _messageInput;
+
+    [SupplyParameterFromForm] 
+    public FormMessage? FormMessage { get; set; }
 
     public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
 
     protected override async Task OnInitializedAsync()
     {
-        _messages = (await ChatService.GetMessagesAsync()).ToList();
+        _positive = DocumentSentiment.Positive.ToString();
+        _neutral = DocumentSentiment.Neutral.ToString();
+        _negative = DocumentSentiment.Negative.ToString();
         
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://localhost:7145/chat-hub")
-            .Build();
+        FormMessage ??= new FormMessage();
 
-        _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
+        try
         {
-            _messages!.Add(chatMessage);
-            StateHasChanged();
-        });
+            _messages = (await ChatService.GetMessagesAsync()).ToList();
+            _messages.Reverse();
 
-        await _hubConnection.StartAsync();
+            _hubConnection = new HubConnectionBuilder()
+                .WithUrl("https://localhost:7145/chat-hub")
+                .Build();
+
+            _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
+            {
+                _messages!.Insert(0, chatMessage);
+                StateHasChanged();
+            });
+
+            await _hubConnection.StartAsync();
+        }
+        catch (Exception e)
+        {
+            _messages = [];
+            Console.WriteLine(e);
+        }
     }
 
     public async Task Send()
     {
-        if (_hubConnection is not null)
+        if (_hubConnection is not null 
+            && !string.IsNullOrEmpty(FormMessage!.Text) 
+            && !string.IsNullOrWhiteSpace(FormMessage.Text))
         {
-            var chatMessage = new ChatMessage(_messageInput, _userInput, DateTimeOffset.UtcNow);
-            _messageInput = string.Empty;
+            var sentiment = await AnalyticsService.GetSentiment(FormMessage!.Text!);
+            
+            var chatMessage = new ChatMessage(
+                FormMessage!.Text, 
+                FormMessage.Nickname, 
+                DateTimeOffset.UtcNow,
+                sentiment);
+            
+            FormMessage.Text = string.Empty;
             await _hubConnection!.SendAsync("SendMessage", chatMessage);
             await ChatService.AddMessageAsync(chatMessage);
         }

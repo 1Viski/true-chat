@@ -1,8 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TrueChat.Core.Dtos;
@@ -23,8 +18,9 @@ public static class ChatEndpoints
     /// <param name="app">The <see cref="WebApplication"/> instance this method extends.</param>
     public static void MapChatEndpoints(this WebApplication app)
     {
-        app.MapGet("/api/v1/chat-messages", GetMessages);
-        app.MapPost("/api/v1/chat-messages", AddMessage);
+        app.MapGet("/api/v1/chat-messages", GetMessagesAsync);
+        app.MapPost("/api/v1/chat-messages", AddMessageAsync);
+        app.MapPost("/api/v1/text-sentiment", GetSentimentAsync);
     }
 
     /// <summary>
@@ -34,7 +30,7 @@ public static class ChatEndpoints
     /// <param name="cancellationToken"><see cref="CancellationToken"/></param>
     /// <returns>Minimal API  handlers</returns>
     private static async Task<Results<Ok<IEnumerable<ChatMessageDto>>, NotFound>> 
-        GetMessages(IChatService chatService, CancellationToken cancellationToken)
+        GetMessagesAsync(IChatService chatService, CancellationToken cancellationToken)
     {
         var messages = await chatService.GetMessagesAsync(cancellationToken);
         return TypedResults.Ok(messages.MapToChatMessageDto());
@@ -48,9 +44,29 @@ public static class ChatEndpoints
     /// <param name="cancellationToken"><see cref="CancellationToken"/></param>
     /// <returns>Minimal API  handlers</returns>
     private static async Task<Results<Ok<ChatMessage>, ProblemHttpResult>> 
-        AddMessage([FromBody] ChatMessageDto messageDto, IChatService chatService, CancellationToken cancellationToken)
+        AddMessageAsync([FromBody] ChatMessageDto messageDto, IChatService chatService, CancellationToken cancellationToken)
     {
         await chatService.AddMessageAsync(messageDto.MapToChatMessage(), cancellationToken);
         return TypedResults.Ok(messageDto.MapToChatMessage());
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="analyticsService"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    private static async Task<Results<Ok<PlainText>, ProblemHttpResult>> 
+        GetSentimentAsync([FromBody] PlainText text, IAnalyticsService analyticsService, CancellationToken cancellationToken)
+    {
+        var sentiment = await analyticsService.GetSentimentAsync(text.Value!, cancellationToken);
+        
+        var plainText = new PlainText
+        {
+            Value = sentiment.ToString()
+        };
+        
+        return TypedResults.Ok(plainText);
     }
 }
