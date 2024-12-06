@@ -3,7 +3,7 @@
 @attribute [StreamRendering]
 @inject IChatService ChatService
 @inject IAnalyticsService AnalyticsService
-@using TrueChat.BlazorApp.Client.Enums
+@inject IConfiguration Configuration
 @implements IAsyncDisposable
 
 <PageTitle>true:chat:room</PageTitle>
@@ -47,7 +47,23 @@
         {
             @foreach (var message in _messages)
             {
-                <ChatMessageCard Message="message"/>
+                Color color;
+                @switch (message.Sentiment)
+                {
+                    case SentimentLabel.Positive:
+                        color = Color.Success;
+                        break;
+                    case SentimentLabel.Neutral:
+                        color = Color.Info;
+                        break;
+                    case SentimentLabel.Negative:
+                        color = Color.Error;
+                        break;
+                    default:
+                        color = Color.Default;
+                        break;
+                }
+                <ChatMessageCard Color="color" Message="message"/>
             }
         }
     </MudPaper>
@@ -96,9 +112,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _positive = DocumentSentiment.Positive.ToString();
-        _neutral = DocumentSentiment.Neutral.ToString();
-        _negative = DocumentSentiment.Negative.ToString();
+        _positive = SentimentLabel.Positive.ToString();
+        _neutral = SentimentLabel.Neutral.ToString();
+        _negative = SentimentLabel.Negative.ToString();
         
         FormMessage ??= new FormMessage();
 
@@ -108,7 +124,7 @@
             _messages.Reverse();
 
             _hubConnection = new HubConnectionBuilder()
-                .WithUrl("https://localhost:7145/chat-hub")
+                .WithUrl(Configuration.GetValue<string>("BaseAddress")! + "chat-hub")
                 .Build();
 
             _hubConnection.On<ChatMessage>("ReceiveMessage", chatMessage =>
@@ -132,7 +148,7 @@
             && !string.IsNullOrEmpty(FormMessage!.Text) 
             && !string.IsNullOrWhiteSpace(FormMessage.Text))
         {
-            var sentiment = await AnalyticsService.GetSentiment(FormMessage!.Text!);
+            var sentiment = await AnalyticsService.GetSentimentAsync(FormMessage!.Text!);
             
             var chatMessage = new ChatMessage(
                 FormMessage!.Text, 

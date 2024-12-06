@@ -1,6 +1,6 @@
 namespace TrueChat.Core.Enums;
 
-public enum DocumentSentiment
+public enum SentimentLabel
 {
     Positive,
     Neutral,

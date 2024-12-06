@@ -1,9 +1,9 @@
 using Azure;
 using Azure.AI.TextAnalytics;
 using Microsoft.Extensions.Options;
+using TrueChat.Core.Enums;
 using TrueChat.Core.Interfaces;
 using TrueChat.Core.Options;
-using DocumentSentiment = TrueChat.Core.Enums.DocumentSentiment;
 
 namespace TrueChat.Core.Services;
 
@@ -18,10 +18,10 @@ public class AnalyticsService : IAnalyticsService
             new AzureKeyCredential(options.Value.Key1!));
     }
 
-    public async Task<DocumentSentiment> GetSentimentAsync(string document, CancellationToken cancellationToken = default)
+    public async Task<SentimentLabel> GetSentimentAsync(string document, CancellationToken cancellationToken = default)
     {
         var response = await _client.AnalyzeSentimentAsync(document, cancellationToken: cancellationToken);
-        var documentSentiment = Enum.Parse<DocumentSentiment>(response.Value.Sentiment.ToString());
-        return documentSentiment;
+        var sentiment = Enum.Parse<SentimentLabel>(response.Value.Sentiment.ToString());
+        return sentiment;
     }
 }

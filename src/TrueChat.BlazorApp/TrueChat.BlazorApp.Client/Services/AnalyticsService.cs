@@ -1,5 +1,5 @@
 using TrueChat.BlazorApp.Client.Clients;
-using DocumentSentiment = TrueChat.BlazorApp.Client.Enums.DocumentSentiment;
+using TrueChat.BlazorApp.Client.Enums;
 
 namespace TrueChat.BlazorApp.Client.Services;
 
@@ -12,7 +12,7 @@ public class AnalyticsService : IAnalyticsService
         _client = client;
     }
 
-    public async Task<DocumentSentiment> GetSentiment(string document)
+    public async Task<SentimentLabel> GetSentimentAsync(string document)
     {
         return await _client.GeSentimentAsync(document);
     }

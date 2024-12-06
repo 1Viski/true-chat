@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using TrueChat.BlazorApp.Client.Models;
 
 namespace TrueChat.BlazorApp.Client.Clients;
@@ -9,10 +10,10 @@ public class ChatClient : IChatClient
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public ChatClient(HttpClient httpClient)
+    public ChatClient(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri("https://localhost:7145/");
+        _httpClient.BaseAddress = new Uri(configuration.GetValue<string>("BaseAddress")!);
         
         _jsonSerializerOptions = new JsonSerializerOptions
         {

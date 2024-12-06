@@ -46,12 +46,6 @@ public class TrueChatDbContext : DbContext, IAppDbContext
                 .HasConversion(
                     x => x.ToString(),
                     x => Ulid.Parse(x));
-
-            entity
-                .Property(x => x.Sentiment)
-                .HasConversion(
-                    x => x.ToString(),
-                    x => Enum.Parse<DocumentSentiment>(x));
         });
     }
 }

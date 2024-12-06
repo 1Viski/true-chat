@@ -1,6 +1,6 @@
 namespace TrueChat.BlazorApp.Client.Enums;
 
-public enum DocumentSentiment
+public enum SentimentLabel
 {
     Positive,
     Neutral,

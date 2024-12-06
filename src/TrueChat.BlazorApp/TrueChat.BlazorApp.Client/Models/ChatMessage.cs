@@ -6,4 +6,4 @@ public record ChatMessage(
     string? Text, 
     string? Nickname, 
     DateTimeOffset SendAt, 
-    DocumentSentiment? Sentiment);
+    SentimentLabel Sentiment);

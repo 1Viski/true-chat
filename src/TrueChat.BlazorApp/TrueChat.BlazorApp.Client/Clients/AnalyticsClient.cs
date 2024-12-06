@@ -10,10 +10,10 @@ public class AnalyticsClient : IAnalyticsClient
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public AnalyticsClient(HttpClient httpClient)
+    public AnalyticsClient(HttpClient httpClient, IConfiguration configuration)
     {
         _httpClient = httpClient;
-        _httpClient.BaseAddress = new Uri("https://localhost:7145/");
+        _httpClient.BaseAddress = new Uri(configuration.GetValue<string>("BaseAddress")!);
         
         _jsonSerializerOptions = new JsonSerializerOptions
         {
@@ -21,7 +21,7 @@ public class AnalyticsClient : IAnalyticsClient
         };
     }
 
-    public async Task<DocumentSentiment> GeSentimentAsync(string document)
+    public async Task<SentimentLabel> GeSentimentAsync(string document)
     {
         var plainText = new PlainText
         {
@@ -37,6 +37,6 @@ public class AnalyticsClient : IAnalyticsClient
         response.EnsureSuccessStatusCode();
         await using var stream = await response.Content.ReadAsStreamAsync();
         var result = await JsonSerializer.DeserializeAsync<PlainText>(stream, _jsonSerializerOptions);
-        return Enum.Parse<DocumentSentiment>(result!.Value!);
+        return Enum.Parse<SentimentLabel>(result!.Value!);
     }
 }

@@ -24,7 +24,7 @@ builder.Services.AddResponseCompression(options =>
 
 builder.Services.AddCors(options => 
     options.AddPolicy("TrueChatClient", policyBuilder =>
-        policyBuilder.WithOrigins("https://localhost:7165")
+        policyBuilder.WithOrigins("https://localhost:7165", "https://wa-true-chat-client.azurewebsites.net/")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowAnyOrigin()));

@@ -12,5 +12,5 @@ public class ChatMessage
 
     public string? Nickname { get; set; }
 
-    public DocumentSentiment Sentiment { get; set; }
+    public SentimentLabel Sentiment { get; set; }
 }

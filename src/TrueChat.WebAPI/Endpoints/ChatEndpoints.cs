@@ -43,11 +43,11 @@ public static class ChatEndpoints
     /// <param name="chatService"><see cref="IChatService"/> instance</param>
     /// <param name="cancellationToken"><see cref="CancellationToken"/></param>
     /// <returns>Minimal API  handlers</returns>
-    private static async Task<Results<Ok<ChatMessage>, ProblemHttpResult>> 
+    private static async Task<Results<Ok<ChatMessageDto>, ProblemHttpResult>> 
         AddMessageAsync([FromBody] ChatMessageDto messageDto, IChatService chatService, CancellationToken cancellationToken)
     {
         await chatService.AddMessageAsync(messageDto.MapToChatMessage(), cancellationToken);
-        return TypedResults.Ok(messageDto.MapToChatMessage());
+        return TypedResults.Ok(messageDto);
     }
 
     /// <summary>

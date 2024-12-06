@@ -4,5 +4,5 @@ namespace TrueChat.BlazorApp.Client.Services;
 
 public interface IAnalyticsService
 {
-    public Task<DocumentSentiment> GetSentiment(string document);
+    public Task<SentimentLabel> GetSentimentAsync(string document);
 }

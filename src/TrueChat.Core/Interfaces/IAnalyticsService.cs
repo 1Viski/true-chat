@@ -4,5 +4,5 @@ namespace TrueChat.Core.Interfaces;
 
 public interface IAnalyticsService
 {
-    public Task<DocumentSentiment> GetSentimentAsync(string document, CancellationToken cancellationToken = default);
+    public Task<SentimentLabel> GetSentimentAsync(string document, CancellationToken cancellationToken = default);
 }

@@ -21,7 +21,6 @@ public class ChatService : IChatService
     public ChatService(IAppDbContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-        
     }
 
     /// <summary>
