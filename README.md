@@ -1,4 +1,6 @@
-# true-chat
+# true:chat
+
+Azure deployment [true:chat](https://wa-true-chat-client.azurewebsites.net/)
 
 ## For local development
 
